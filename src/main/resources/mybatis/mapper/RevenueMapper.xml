@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lks.mapper.RevenueMapper">
+
+    <select id="revenueCount" resultType="BigDecimal">
+        SELECT
+          IFNULL(SUM(real_amount), 0) - IFNULL(SUM(refund_amount), 0) AS realAmount
+        FROM
+            orders
+        WHERE
+            org_id = #{orgId}
+        AND `status` = 3
+        <if test="beginTime != null and beginTime != ''">
+            AND add_time >= #{beginTime}
+        </if>
+        <if test="endTime != null and endTime != ''">
+            AND add_time <![CDATA[ <= ]]> #{endTime}
+        </if>
+    </select>
+    
+    <select id="revenueChartDay" resultType="Map">
+         SELECT
+            date_format(add_time, '%e') AS completeTime,
+            IFNULL(SUM(real_amount), 0) - IFNULL(SUM(refund_amount), 0) AS realAmount
+        FROM
+            orders
+        WHERE
+            org_id = #{orgId}
+            AND `status` = 3
+            AND add_time >= #{beginTime}
+            AND add_time <![CDATA[ <= ]]> #{endTime}
+        GROUP BY
+            completeTime
+        ORDER BY
+	        completeTime DESC
+    </select>
+
+    <select id="revenueChartMonth" resultType="Map">
+         SELECT
+            date_format(add_time, '%c') AS completeTime,
+            IFNULL(SUM(real_amount), 0) - IFNULL(SUM(refund_amount), 0) AS realAmount
+        FROM
+            orders
+        WHERE
+            org_id = #{orgId}
+            AND `status` = 3
+            AND add_time >= #{beginTime}
+            AND add_time <![CDATA[ <= ]]> #{endTime}
+        GROUP BY
+            completeTime
+        ORDER BY
+            completeTime DESC
+    </select>
+</mapper>

@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lks.mapper.RefundMapper">
+
+    <select id="getOrgParent" resultType="Map">
+        SELECT
+            a.commission_ratio AS commissionRatio,
+            a.org_id AS orgId
+        FROM
+            sys_org b
+        LEFT JOIN account_info a ON b.parent_id = a.org_id
+        WHERE
+            b.id = #{orgId}
+    </select>
+
+    <update id="setUserMoney" parameterType="list">
+        <foreach collection="list" item="item" separator=";">
+          UPDATE account_info SET balance = balance+#{item.amount},amount = amount+#{item.amount},commission_amount = commission_amount+#{item.amount}
+                      WHERE  org_id = #{item.orgId};
+        </foreach>
+    </update>
+
+    <insert id="addLog" parameterType="list">
+        <foreach collection="list" item="item" separator=";">
+            INSERT account_info_log (`type`,org_id,order_id,order_good_id,amount,remark,ratio,add_time)
+              VALUES (#{item.type}, #{item.orgId}, #{item.orderId}, 0, #{item.amount},#{item.remark},#{item.ratio},now())
+        </foreach>
+    </insert>
+
+    <select id="withdrawDetail" resultType="Map">
+      SELECT
+        drawal_account_type AS drawalAccountType,
+        drawal_bank_name AS drawalBankName,
+        drawal_meony AS drawalMeony,
+        audit_status AS auditStatus,
+        apply_time AS applyTime,
+        right(drawal_card_number,4) AS drawalCardNumber,
+        audit_time AS auditTime,
+        remark,
+        apply_user_name AS applyUserName
+    FROM
+        account_drawal_apply
+    WHERE
+        id = #{id}
+    AND org_id = #{orgId}
+    </select>
+
+</mapper>

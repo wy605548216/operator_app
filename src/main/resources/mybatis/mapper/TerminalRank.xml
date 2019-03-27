@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lks.mapper.TerminalRankMapper">
+
+  <select id="terminalRank" parameterType="java.lang.Integer" resultType="Map">
+    SELECT
+        a.id AS id,
+        a.img_url AS imgUrl,
+        a.`name` AS `name`,
+        a.address AS address,
+        IFNULL(SUM(b.real_amount), 0) - IFNULL(SUM(b.refund_amount), 0) AS realAmount
+    FROM
+        terminals AS a
+    LEFT JOIN orders AS b ON a.id = b.terminal_id
+    WHERE
+        a.org_id = #{orgId}
+    AND b.org_id = #{orgId}
+    AND b.`status` = 3
+    <if test="keyWord!= null and keyWord!= ''">
+        AND a.`name` LIKE CONCAT('%',#{keyWord},'%') OR  a.address LIKE CONCAT('%',#{keyWord},'%')
+    </if>
+    <if test="startTime!= null and startTime!= ''">
+        AND b.add_time >= #{startTime}
+    </if>
+    <if test="endTime!= null and endTime!= ''">
+        AND b.add_time <![CDATA[ <= ]]> #{endTime}
+    </if>
+    GROUP BY
+        a.id,
+        a.img_url,
+        a.`name`,
+        a.address
+    ORDER BY
+        realAmount DESC
+  </select>
+
+  <select id="terminalStateCount" parameterType="java.lang.Integer" resultType="Map">
+      SELECT
+          COUNT(0) as 'totality',
+          SUM(case when `status` =1 then 1 else 0 end) as "open",
+          SUM(case when `status` =0 then 1 else 0 end) as "close",
+          COUNT(c.id) as "lackNum",
+          SUM(case when date_add(b.last_link_time,interval 15 minute)>NOW() then 1 else 0 end) as "onLine",
+          SUM(case when date_add(b.last_link_time,interval 15 minute) <![CDATA[ <NOW() ]]> then 1 else 0 end) as "offLine"
+      FROM
+        terminals a
+        LEFT JOIN terminal_state b ON a.terminal_no = b.terminal_no
+        LEFT JOIN ( SELECT
+                            a.id,
+                            IFNULL(SUM(c.max_quantity) - (SUM(c.stock_quantity)+ SUM(c.occupy_count)),0) AS lackNum
+                    FROM
+                            terminals a
+                    LEFT JOIN terminal_good_relation c ON a.terminal_no = c.terminal_no
+                    WHERE
+                            a.org_id = #{orgId}
+                    GROUP BY a.id
+                    having SUM(c.max_quantity) - (SUM(c.stock_quantity)+ SUM(c.occupy_count))> 0
+        ) c ON  a.id = c.id
+      WHERE
+        org_id = #{orgId} AND a.is_delete = 0
+  </select>
+
+  <select id="getTerminalList"  resultType="Map">
+    SELECT
+        a.id AS id,
+        a.img_url AS imgUrl,
+        a.`name` AS `name`,
+        a.address AS address,
+        IFNULL(SUM(c.max_quantity) - (SUM(c.stock_quantity)+ SUM(c.occupy_count)),0) AS lackNum,
+        case when date_add(b.last_link_time,interval 15 minute)>NOW() then 1 else 0 end AS isOnLine,
+        a.`status` AS `status`
+    FROM
+        terminals a
+    LEFT JOIN terminal_state b ON a.terminal_no = b.terminal_no
+    LEFT JOIN terminal_good_relation c ON a.terminal_no = c.terminal_no
+    WHERE
+        a.org_id = #{orgId} AND  a.is_delete = 0
+        <if test="state == 2">
+          AND a.`status` = 1
+        </if>
+        <if test="state == 3">
+          AND a.`status` = 0
+        </if>
+        <if test="state == 4">
+          AND  date_add(b.last_link_time,interval 15 minute)<![CDATA[ <NOW() ]]>
+        </if>
+        <if test="state == 5">
+          AND date_add(b.last_link_time,interval 15 minute)>NOW()
+        </if>
+        <if test="conditions != null and conditions != ''">
+          AND a.`name` LIKE CONCAT('%',#{conditions},'%') OR  a.address LIKE CONCAT('%',#{conditions},'%')
+        </if>
+        GROUP BY a.id,imgUrl,`name`,address,isOnLine,`status`
+        <if test="state == 1">
+        having SUM(c.max_quantity) - (SUM(c.stock_quantity)+ SUM(c.occupy_count))> 0
+        </if>
+  </select>
+
+  <select id="getTerminalInfo" resultType="Map">
+      SELECT
+          a.id AS id,
+          a.`name` AS `name`,
+          a.address AS address,
+          e.real_name AS realName,
+          case when date_add(b.last_link_time,interval 15 minute)>NOW() then 1 else 0 end AS isOnLine,
+          a.`status` AS `status`,
+          b.network_signal AS networkSignal,
+          IFNULL(SUM(c.max_quantity) - (SUM(c.stock_quantity)+ SUM(c.occupy_count)),0) AS lackNum,
+          SUM(case when d.total_inventory <![CDATA[ <= 0 ]]> then 1 else 0 end) AS stockout
+      FROM
+          terminals a
+          LEFT JOIN terminal_state b ON a.terminal_no = b.terminal_no
+          LEFT JOIN terminal_good_relation c ON a.id = c.terminal_id
+          LEFT JOIN goods d ON c.good_id = d.id
+          LEFT JOIN sys_user e ON a.distrib_user_id = e.id
+      WHERE
+          a.id = #{terminalId} GROUP BY id,`name`,address,isOnLine,`status`,networkSignal,realName
+  </select>
+
+  <select id="getLineAndPoint" resultType="Map">
+    SELECT
+        a.id AS lineId,
+        a.title AS lineTitle,
+        b.id AS pointId,
+        b.line_id AS pointPId,
+        b.title AS pointTitle
+    FROM
+        terminal_line a
+    LEFT JOIN terminal_point b ON a.id = b.line_id
+    WHERE
+      org_id = #{orgId}
+  </select>
+
+  <update id="setOnOff">
+      UPDATE terminals SET `status` = IF(`status` = 0,1,0) WHERE id =#{terminalId} AND org_id =#{orgId}
+  </update>
+
+</mapper>

@@ -1,0 +1,732 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lks.mapper.TerminalsMapper">
+  <resultMap id="BaseResultMap" type="com.lks.pojo.Terminals">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="org_id" jdbcType="INTEGER" property="orgId" />
+    <result column="province_id" jdbcType="INTEGER" property="provinceId" />
+    <result column="img_url" jdbcType="VARCHAR" property="imgUrl" />
+    <result column="city_id" jdbcType="INTEGER" property="cityId" />
+    <result column="area_id" jdbcType="INTEGER" property="areaId" />
+    <result column="address" jdbcType="VARCHAR" property="address" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="terminal_no" jdbcType="VARCHAR" property="terminalNo" />
+    <result column="status" jdbcType="TINYINT" property="status" />
+    <result column="add_time" jdbcType="TIMESTAMP" property="addTime" />
+    <result column="longitude" jdbcType="DOUBLE" property="longitude" />
+    <result column="latitude" jdbcType="DOUBLE" property="latitude" />
+    <result column="label" jdbcType="VARCHAR" property="label" />
+    <result column="img_logo" jdbcType="VARCHAR" property="imgLogo" />
+    <result column="stock_status" jdbcType="BIT" property="stockStatus" />
+    <result column="province_name" jdbcType="VARCHAR" property="provinceName" />
+    <result column="city_name" jdbcType="VARCHAR" property="cityName" />
+    <result column="area_name" jdbcType="VARCHAR" property="areaName" />
+    <result column="distrib_user_id" jdbcType="INTEGER" property="distribUserId" />
+    <result column="container_depth" jdbcType="INTEGER" property="containerDepth" />
+    <result column="control_type" jdbcType="TINYINT" property="controlType" />
+    <result column="terminal_type" jdbcType="TINYINT" property="terminalType" />
+    <result column="maker" jdbcType="VARCHAR" property="maker" />
+    <result column="model_num" jdbcType="VARCHAR" property="modelNum" />
+    <result column="model_id" jdbcType="INTEGER" property="modelId" />
+    <result column="out_count" jdbcType="INTEGER" property="outCount" />
+    <result column="take_out_time" jdbcType="DECIMAL" property="takeOutTime" />
+    <result column="buy_way" jdbcType="INTEGER" property="buyWay" />
+    <result column="contract_date" jdbcType="TIMESTAMP" property="contractDate" />
+    <result column="line_id" jdbcType="INTEGER" property="lineId" />
+    <result column="line_title" jdbcType="VARCHAR" property="lineTitle" />
+    <result column="point_id" jdbcType="INTEGER" property="pointId" />
+    <result column="point_title" jdbcType="VARCHAR" property="pointTitle" />
+    <result column="last_advert_time" jdbcType="TIMESTAMP" property="lastAdvertTime" />
+    <result column="is_delete" jdbcType="BIT" property="isDelete" />
+    <result column="is_merge_shipment" jdbcType="BIT" property="isMergeShipment" />
+    <result column="is_sync_terminal" jdbcType="BIT" property="isSyncTerminal" />
+  </resultMap>
+  <sql id="Example_Where_Clause">
+    <where>
+      <foreach collection="oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause">
+    <where>
+      <foreach collection="example.oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List">
+    id, org_id, province_id, img_url, city_id, area_id, address, name, terminal_no, status, 
+    add_time, longitude, latitude, label, img_logo, stock_status, province_name, city_name, 
+    area_name, distrib_user_id, container_depth, control_type, terminal_type, maker, 
+    model_num, model_id, out_count, take_out_time, buy_way, contract_date, line_id, line_title, 
+    point_id, point_title, last_advert_time, is_delete, is_merge_shipment, is_sync_terminal
+  </sql>
+  <select id="selectByExample" parameterType="com.lks.pojo.TerminalsExample" resultMap="BaseResultMap">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from terminals
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from terminals
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from terminals
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.lks.pojo.TerminalsExample">
+    delete from terminals
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.lks.pojo.Terminals">
+    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into terminals (org_id, province_id, img_url, 
+      city_id, area_id, address, 
+      name, terminal_no, status, 
+      add_time, longitude, latitude, 
+      label, img_logo, stock_status, 
+      province_name, city_name, area_name, 
+      distrib_user_id, container_depth, control_type, 
+      terminal_type, maker, model_num, 
+      model_id, out_count, take_out_time, 
+      buy_way, contract_date, line_id, 
+      line_title, point_id, point_title, 
+      last_advert_time, is_delete, is_merge_shipment, 
+      is_sync_terminal)
+    values (#{orgId,jdbcType=INTEGER}, #{provinceId,jdbcType=INTEGER}, #{imgUrl,jdbcType=VARCHAR}, 
+      #{cityId,jdbcType=INTEGER}, #{areaId,jdbcType=INTEGER}, #{address,jdbcType=VARCHAR}, 
+      #{name,jdbcType=VARCHAR}, #{terminalNo,jdbcType=VARCHAR}, #{status,jdbcType=TINYINT}, 
+      #{addTime,jdbcType=TIMESTAMP}, #{longitude,jdbcType=DOUBLE}, #{latitude,jdbcType=DOUBLE}, 
+      #{label,jdbcType=VARCHAR}, #{imgLogo,jdbcType=VARCHAR}, #{stockStatus,jdbcType=BIT}, 
+      #{provinceName,jdbcType=VARCHAR}, #{cityName,jdbcType=VARCHAR}, #{areaName,jdbcType=VARCHAR}, 
+      #{distribUserId,jdbcType=INTEGER}, #{containerDepth,jdbcType=INTEGER}, #{controlType,jdbcType=TINYINT}, 
+      #{terminalType,jdbcType=TINYINT}, #{maker,jdbcType=VARCHAR}, #{modelNum,jdbcType=VARCHAR}, 
+      #{modelId,jdbcType=INTEGER}, #{outCount,jdbcType=INTEGER}, #{takeOutTime,jdbcType=DECIMAL}, 
+      #{buyWay,jdbcType=INTEGER}, #{contractDate,jdbcType=TIMESTAMP}, #{lineId,jdbcType=INTEGER}, 
+      #{lineTitle,jdbcType=VARCHAR}, #{pointId,jdbcType=INTEGER}, #{pointTitle,jdbcType=VARCHAR}, 
+      #{lastAdvertTime,jdbcType=TIMESTAMP}, #{isDelete,jdbcType=BIT}, #{isMergeShipment,jdbcType=BIT}, 
+      #{isSyncTerminal,jdbcType=BIT})
+  </insert>
+  <insert id="insertSelective" parameterType="com.lks.pojo.Terminals">
+    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into terminals
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="orgId != null">
+        org_id,
+      </if>
+      <if test="provinceId != null">
+        province_id,
+      </if>
+      <if test="imgUrl != null">
+        img_url,
+      </if>
+      <if test="cityId != null">
+        city_id,
+      </if>
+      <if test="areaId != null">
+        area_id,
+      </if>
+      <if test="address != null">
+        address,
+      </if>
+      <if test="name != null">
+        name,
+      </if>
+      <if test="terminalNo != null">
+        terminal_no,
+      </if>
+      <if test="status != null">
+        status,
+      </if>
+      <if test="addTime != null">
+        add_time,
+      </if>
+      <if test="longitude != null">
+        longitude,
+      </if>
+      <if test="latitude != null">
+        latitude,
+      </if>
+      <if test="label != null">
+        label,
+      </if>
+      <if test="imgLogo != null">
+        img_logo,
+      </if>
+      <if test="stockStatus != null">
+        stock_status,
+      </if>
+      <if test="provinceName != null">
+        province_name,
+      </if>
+      <if test="cityName != null">
+        city_name,
+      </if>
+      <if test="areaName != null">
+        area_name,
+      </if>
+      <if test="distribUserId != null">
+        distrib_user_id,
+      </if>
+      <if test="containerDepth != null">
+        container_depth,
+      </if>
+      <if test="controlType != null">
+        control_type,
+      </if>
+      <if test="terminalType != null">
+        terminal_type,
+      </if>
+      <if test="maker != null">
+        maker,
+      </if>
+      <if test="modelNum != null">
+        model_num,
+      </if>
+      <if test="modelId != null">
+        model_id,
+      </if>
+      <if test="outCount != null">
+        out_count,
+      </if>
+      <if test="takeOutTime != null">
+        take_out_time,
+      </if>
+      <if test="buyWay != null">
+        buy_way,
+      </if>
+      <if test="contractDate != null">
+        contract_date,
+      </if>
+      <if test="lineId != null">
+        line_id,
+      </if>
+      <if test="lineTitle != null">
+        line_title,
+      </if>
+      <if test="pointId != null">
+        point_id,
+      </if>
+      <if test="pointTitle != null">
+        point_title,
+      </if>
+      <if test="lastAdvertTime != null">
+        last_advert_time,
+      </if>
+      <if test="isDelete != null">
+        is_delete,
+      </if>
+      <if test="isMergeShipment != null">
+        is_merge_shipment,
+      </if>
+      <if test="isSyncTerminal != null">
+        is_sync_terminal,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="orgId != null">
+        #{orgId,jdbcType=INTEGER},
+      </if>
+      <if test="provinceId != null">
+        #{provinceId,jdbcType=INTEGER},
+      </if>
+      <if test="imgUrl != null">
+        #{imgUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="cityId != null">
+        #{cityId,jdbcType=INTEGER},
+      </if>
+      <if test="areaId != null">
+        #{areaId,jdbcType=INTEGER},
+      </if>
+      <if test="address != null">
+        #{address,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null">
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="terminalNo != null">
+        #{terminalNo,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null">
+        #{status,jdbcType=TINYINT},
+      </if>
+      <if test="addTime != null">
+        #{addTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="longitude != null">
+        #{longitude,jdbcType=DOUBLE},
+      </if>
+      <if test="latitude != null">
+        #{latitude,jdbcType=DOUBLE},
+      </if>
+      <if test="label != null">
+        #{label,jdbcType=VARCHAR},
+      </if>
+      <if test="imgLogo != null">
+        #{imgLogo,jdbcType=VARCHAR},
+      </if>
+      <if test="stockStatus != null">
+        #{stockStatus,jdbcType=BIT},
+      </if>
+      <if test="provinceName != null">
+        #{provinceName,jdbcType=VARCHAR},
+      </if>
+      <if test="cityName != null">
+        #{cityName,jdbcType=VARCHAR},
+      </if>
+      <if test="areaName != null">
+        #{areaName,jdbcType=VARCHAR},
+      </if>
+      <if test="distribUserId != null">
+        #{distribUserId,jdbcType=INTEGER},
+      </if>
+      <if test="containerDepth != null">
+        #{containerDepth,jdbcType=INTEGER},
+      </if>
+      <if test="controlType != null">
+        #{controlType,jdbcType=TINYINT},
+      </if>
+      <if test="terminalType != null">
+        #{terminalType,jdbcType=TINYINT},
+      </if>
+      <if test="maker != null">
+        #{maker,jdbcType=VARCHAR},
+      </if>
+      <if test="modelNum != null">
+        #{modelNum,jdbcType=VARCHAR},
+      </if>
+      <if test="modelId != null">
+        #{modelId,jdbcType=INTEGER},
+      </if>
+      <if test="outCount != null">
+        #{outCount,jdbcType=INTEGER},
+      </if>
+      <if test="takeOutTime != null">
+        #{takeOutTime,jdbcType=DECIMAL},
+      </if>
+      <if test="buyWay != null">
+        #{buyWay,jdbcType=INTEGER},
+      </if>
+      <if test="contractDate != null">
+        #{contractDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lineId != null">
+        #{lineId,jdbcType=INTEGER},
+      </if>
+      <if test="lineTitle != null">
+        #{lineTitle,jdbcType=VARCHAR},
+      </if>
+      <if test="pointId != null">
+        #{pointId,jdbcType=INTEGER},
+      </if>
+      <if test="pointTitle != null">
+        #{pointTitle,jdbcType=VARCHAR},
+      </if>
+      <if test="lastAdvertTime != null">
+        #{lastAdvertTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="isDelete != null">
+        #{isDelete,jdbcType=BIT},
+      </if>
+      <if test="isMergeShipment != null">
+        #{isMergeShipment,jdbcType=BIT},
+      </if>
+      <if test="isSyncTerminal != null">
+        #{isSyncTerminal,jdbcType=BIT},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.lks.pojo.TerminalsExample" resultType="java.lang.Long">
+    select count(*) from terminals
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map">
+    update terminals
+    <set>
+      <if test="record.id != null">
+        id = #{record.id,jdbcType=INTEGER},
+      </if>
+      <if test="record.orgId != null">
+        org_id = #{record.orgId,jdbcType=INTEGER},
+      </if>
+      <if test="record.provinceId != null">
+        province_id = #{record.provinceId,jdbcType=INTEGER},
+      </if>
+      <if test="record.imgUrl != null">
+        img_url = #{record.imgUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="record.cityId != null">
+        city_id = #{record.cityId,jdbcType=INTEGER},
+      </if>
+      <if test="record.areaId != null">
+        area_id = #{record.areaId,jdbcType=INTEGER},
+      </if>
+      <if test="record.address != null">
+        address = #{record.address,jdbcType=VARCHAR},
+      </if>
+      <if test="record.name != null">
+        name = #{record.name,jdbcType=VARCHAR},
+      </if>
+      <if test="record.terminalNo != null">
+        terminal_no = #{record.terminalNo,jdbcType=VARCHAR},
+      </if>
+      <if test="record.status != null">
+        status = #{record.status,jdbcType=TINYINT},
+      </if>
+      <if test="record.addTime != null">
+        add_time = #{record.addTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.longitude != null">
+        longitude = #{record.longitude,jdbcType=DOUBLE},
+      </if>
+      <if test="record.latitude != null">
+        latitude = #{record.latitude,jdbcType=DOUBLE},
+      </if>
+      <if test="record.label != null">
+        label = #{record.label,jdbcType=VARCHAR},
+      </if>
+      <if test="record.imgLogo != null">
+        img_logo = #{record.imgLogo,jdbcType=VARCHAR},
+      </if>
+      <if test="record.stockStatus != null">
+        stock_status = #{record.stockStatus,jdbcType=BIT},
+      </if>
+      <if test="record.provinceName != null">
+        province_name = #{record.provinceName,jdbcType=VARCHAR},
+      </if>
+      <if test="record.cityName != null">
+        city_name = #{record.cityName,jdbcType=VARCHAR},
+      </if>
+      <if test="record.areaName != null">
+        area_name = #{record.areaName,jdbcType=VARCHAR},
+      </if>
+      <if test="record.distribUserId != null">
+        distrib_user_id = #{record.distribUserId,jdbcType=INTEGER},
+      </if>
+      <if test="record.containerDepth != null">
+        container_depth = #{record.containerDepth,jdbcType=INTEGER},
+      </if>
+      <if test="record.controlType != null">
+        control_type = #{record.controlType,jdbcType=TINYINT},
+      </if>
+      <if test="record.terminalType != null">
+        terminal_type = #{record.terminalType,jdbcType=TINYINT},
+      </if>
+      <if test="record.maker != null">
+        maker = #{record.maker,jdbcType=VARCHAR},
+      </if>
+      <if test="record.modelNum != null">
+        model_num = #{record.modelNum,jdbcType=VARCHAR},
+      </if>
+      <if test="record.modelId != null">
+        model_id = #{record.modelId,jdbcType=INTEGER},
+      </if>
+      <if test="record.outCount != null">
+        out_count = #{record.outCount,jdbcType=INTEGER},
+      </if>
+      <if test="record.takeOutTime != null">
+        take_out_time = #{record.takeOutTime,jdbcType=DECIMAL},
+      </if>
+      <if test="record.buyWay != null">
+        buy_way = #{record.buyWay,jdbcType=INTEGER},
+      </if>
+      <if test="record.contractDate != null">
+        contract_date = #{record.contractDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.lineId != null">
+        line_id = #{record.lineId,jdbcType=INTEGER},
+      </if>
+      <if test="record.lineTitle != null">
+        line_title = #{record.lineTitle,jdbcType=VARCHAR},
+      </if>
+      <if test="record.pointId != null">
+        point_id = #{record.pointId,jdbcType=INTEGER},
+      </if>
+      <if test="record.pointTitle != null">
+        point_title = #{record.pointTitle,jdbcType=VARCHAR},
+      </if>
+      <if test="record.lastAdvertTime != null">
+        last_advert_time = #{record.lastAdvertTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.isDelete != null">
+        is_delete = #{record.isDelete,jdbcType=BIT},
+      </if>
+      <if test="record.isMergeShipment != null">
+        is_merge_shipment = #{record.isMergeShipment,jdbcType=BIT},
+      </if>
+      <if test="record.isSyncTerminal != null">
+        is_sync_terminal = #{record.isSyncTerminal,jdbcType=BIT},
+      </if>
+    </set>
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map">
+    update terminals
+    set id = #{record.id,jdbcType=INTEGER},
+      org_id = #{record.orgId,jdbcType=INTEGER},
+      province_id = #{record.provinceId,jdbcType=INTEGER},
+      img_url = #{record.imgUrl,jdbcType=VARCHAR},
+      city_id = #{record.cityId,jdbcType=INTEGER},
+      area_id = #{record.areaId,jdbcType=INTEGER},
+      address = #{record.address,jdbcType=VARCHAR},
+      name = #{record.name,jdbcType=VARCHAR},
+      terminal_no = #{record.terminalNo,jdbcType=VARCHAR},
+      status = #{record.status,jdbcType=TINYINT},
+      add_time = #{record.addTime,jdbcType=TIMESTAMP},
+      longitude = #{record.longitude,jdbcType=DOUBLE},
+      latitude = #{record.latitude,jdbcType=DOUBLE},
+      label = #{record.label,jdbcType=VARCHAR},
+      img_logo = #{record.imgLogo,jdbcType=VARCHAR},
+      stock_status = #{record.stockStatus,jdbcType=BIT},
+      province_name = #{record.provinceName,jdbcType=VARCHAR},
+      city_name = #{record.cityName,jdbcType=VARCHAR},
+      area_name = #{record.areaName,jdbcType=VARCHAR},
+      distrib_user_id = #{record.distribUserId,jdbcType=INTEGER},
+      container_depth = #{record.containerDepth,jdbcType=INTEGER},
+      control_type = #{record.controlType,jdbcType=TINYINT},
+      terminal_type = #{record.terminalType,jdbcType=TINYINT},
+      maker = #{record.maker,jdbcType=VARCHAR},
+      model_num = #{record.modelNum,jdbcType=VARCHAR},
+      model_id = #{record.modelId,jdbcType=INTEGER},
+      out_count = #{record.outCount,jdbcType=INTEGER},
+      take_out_time = #{record.takeOutTime,jdbcType=DECIMAL},
+      buy_way = #{record.buyWay,jdbcType=INTEGER},
+      contract_date = #{record.contractDate,jdbcType=TIMESTAMP},
+      line_id = #{record.lineId,jdbcType=INTEGER},
+      line_title = #{record.lineTitle,jdbcType=VARCHAR},
+      point_id = #{record.pointId,jdbcType=INTEGER},
+      point_title = #{record.pointTitle,jdbcType=VARCHAR},
+      last_advert_time = #{record.lastAdvertTime,jdbcType=TIMESTAMP},
+      is_delete = #{record.isDelete,jdbcType=BIT},
+      is_merge_shipment = #{record.isMergeShipment,jdbcType=BIT},
+      is_sync_terminal = #{record.isSyncTerminal,jdbcType=BIT}
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.lks.pojo.Terminals">
+    update terminals
+    <set>
+      <if test="orgId != null">
+        org_id = #{orgId,jdbcType=INTEGER},
+      </if>
+      <if test="provinceId != null">
+        province_id = #{provinceId,jdbcType=INTEGER},
+      </if>
+      <if test="imgUrl != null">
+        img_url = #{imgUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="cityId != null">
+        city_id = #{cityId,jdbcType=INTEGER},
+      </if>
+      <if test="areaId != null">
+        area_id = #{areaId,jdbcType=INTEGER},
+      </if>
+      <if test="address != null">
+        address = #{address,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null">
+        name = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="terminalNo != null">
+        terminal_no = #{terminalNo,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null">
+        status = #{status,jdbcType=TINYINT},
+      </if>
+      <if test="addTime != null">
+        add_time = #{addTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="longitude != null">
+        longitude = #{longitude,jdbcType=DOUBLE},
+      </if>
+      <if test="latitude != null">
+        latitude = #{latitude,jdbcType=DOUBLE},
+      </if>
+      <if test="label != null">
+        label = #{label,jdbcType=VARCHAR},
+      </if>
+      <if test="imgLogo != null">
+        img_logo = #{imgLogo,jdbcType=VARCHAR},
+      </if>
+      <if test="stockStatus != null">
+        stock_status = #{stockStatus,jdbcType=BIT},
+      </if>
+      <if test="provinceName != null">
+        province_name = #{provinceName,jdbcType=VARCHAR},
+      </if>
+      <if test="cityName != null">
+        city_name = #{cityName,jdbcType=VARCHAR},
+      </if>
+      <if test="areaName != null">
+        area_name = #{areaName,jdbcType=VARCHAR},
+      </if>
+      <if test="distribUserId != null">
+        distrib_user_id = #{distribUserId,jdbcType=INTEGER},
+      </if>
+      <if test="containerDepth != null">
+        container_depth = #{containerDepth,jdbcType=INTEGER},
+      </if>
+      <if test="controlType != null">
+        control_type = #{controlType,jdbcType=TINYINT},
+      </if>
+      <if test="terminalType != null">
+        terminal_type = #{terminalType,jdbcType=TINYINT},
+      </if>
+      <if test="maker != null">
+        maker = #{maker,jdbcType=VARCHAR},
+      </if>
+      <if test="modelNum != null">
+        model_num = #{modelNum,jdbcType=VARCHAR},
+      </if>
+      <if test="modelId != null">
+        model_id = #{modelId,jdbcType=INTEGER},
+      </if>
+      <if test="outCount != null">
+        out_count = #{outCount,jdbcType=INTEGER},
+      </if>
+      <if test="takeOutTime != null">
+        take_out_time = #{takeOutTime,jdbcType=DECIMAL},
+      </if>
+      <if test="buyWay != null">
+        buy_way = #{buyWay,jdbcType=INTEGER},
+      </if>
+      <if test="contractDate != null">
+        contract_date = #{contractDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lineId != null">
+        line_id = #{lineId,jdbcType=INTEGER},
+      </if>
+      <if test="lineTitle != null">
+        line_title = #{lineTitle,jdbcType=VARCHAR},
+      </if>
+      <if test="pointId != null">
+        point_id = #{pointId,jdbcType=INTEGER},
+      </if>
+      <if test="pointTitle != null">
+        point_title = #{pointTitle,jdbcType=VARCHAR},
+      </if>
+      <if test="lastAdvertTime != null">
+        last_advert_time = #{lastAdvertTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="isDelete != null">
+        is_delete = #{isDelete,jdbcType=BIT},
+      </if>
+      <if test="isMergeShipment != null">
+        is_merge_shipment = #{isMergeShipment,jdbcType=BIT},
+      </if>
+      <if test="isSyncTerminal != null">
+        is_sync_terminal = #{isSyncTerminal,jdbcType=BIT},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.lks.pojo.Terminals">
+    update terminals
+    set org_id = #{orgId,jdbcType=INTEGER},
+      province_id = #{provinceId,jdbcType=INTEGER},
+      img_url = #{imgUrl,jdbcType=VARCHAR},
+      city_id = #{cityId,jdbcType=INTEGER},
+      area_id = #{areaId,jdbcType=INTEGER},
+      address = #{address,jdbcType=VARCHAR},
+      name = #{name,jdbcType=VARCHAR},
+      terminal_no = #{terminalNo,jdbcType=VARCHAR},
+      status = #{status,jdbcType=TINYINT},
+      add_time = #{addTime,jdbcType=TIMESTAMP},
+      longitude = #{longitude,jdbcType=DOUBLE},
+      latitude = #{latitude,jdbcType=DOUBLE},
+      label = #{label,jdbcType=VARCHAR},
+      img_logo = #{imgLogo,jdbcType=VARCHAR},
+      stock_status = #{stockStatus,jdbcType=BIT},
+      province_name = #{provinceName,jdbcType=VARCHAR},
+      city_name = #{cityName,jdbcType=VARCHAR},
+      area_name = #{areaName,jdbcType=VARCHAR},
+      distrib_user_id = #{distribUserId,jdbcType=INTEGER},
+      container_depth = #{containerDepth,jdbcType=INTEGER},
+      control_type = #{controlType,jdbcType=TINYINT},
+      terminal_type = #{terminalType,jdbcType=TINYINT},
+      maker = #{maker,jdbcType=VARCHAR},
+      model_num = #{modelNum,jdbcType=VARCHAR},
+      model_id = #{modelId,jdbcType=INTEGER},
+      out_count = #{outCount,jdbcType=INTEGER},
+      take_out_time = #{takeOutTime,jdbcType=DECIMAL},
+      buy_way = #{buyWay,jdbcType=INTEGER},
+      contract_date = #{contractDate,jdbcType=TIMESTAMP},
+      line_id = #{lineId,jdbcType=INTEGER},
+      line_title = #{lineTitle,jdbcType=VARCHAR},
+      point_id = #{pointId,jdbcType=INTEGER},
+      point_title = #{pointTitle,jdbcType=VARCHAR},
+      last_advert_time = #{lastAdvertTime,jdbcType=TIMESTAMP},
+      is_delete = #{isDelete,jdbcType=BIT},
+      is_merge_shipment = #{isMergeShipment,jdbcType=BIT},
+      is_sync_terminal = #{isSyncTerminal,jdbcType=BIT}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

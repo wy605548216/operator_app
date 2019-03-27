@@ -1,0 +1,37 @@
+spring:
+  datasource:
+    driver-class-name: com.mysql.jdbc.Driver
+    url: jdbc:mysql://47.100.49.231/luxtek_v2?serverTimezone=Asia/Shanghai&characterEncoding=utf-8&allowMultiQueries=true
+    #url: jdbc:mysql://47.100.49.231/kjs20190121?serverTimezone=Asia/Shanghai&characterEncoding=utf-8&allowMultiQueries=true
+    username: testservice
+    password: kj123456!
+    maxLifetime: 1800000
+  redis:
+    database: 3
+    host: 47.100.49.231
+    port: 6379
+    password:
+
+## 该配置节点为独立的节点，有很多同学容易将这个配置放在spring的节点下，导致配置无法被识别
+mybatis.mapper-locations: classpath:mybatis/mapper/*.xml  #注意：一定要对应mapper映射xml文件的所在路径
+mybatis.type-aliases-package: com.luxtek.pojo  # 注意：对应实体类的路径
+mybatis:
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+
+#pagehelper分页插件
+pagehelper:
+    helperDialect: mysql
+    reasonable: false
+    supportMethodsArguments: true
+    params: count=countSql
+
+# 打印sql
+logging:
+  level:
+    com.luxtek.mapper : DEBUG
+
+url:
+  pic: http://file.test.kj-tek.com
+  refund: http://pay.test.kj-tek.com
+  token: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwcm9qZWN0X2lkIjoiMiIsIm9yZ19pZCI6IjAiLCJodHRwOi8vc2NoZW1hcy5taWNyb3NvZnQuY29tL3dzLzIwMDgvMDYvaWRlbnRpdHkvY2xhaW1zL2V4cGlyYXRpb24iOiIwMy8xOC8yMDIwIDA2OjA3OjE2IiwibmJmIjoxNTQ3NjkwODM2LCJleHAiOjE1ODQ0ODI4MzYsImlzcyI6InRlc3QiLCJhdWQiOiJ0ZXN0In0.8r_dmDKopMhodA7OiOQR5PlPc00WuC-tOfdgLxQVhVg

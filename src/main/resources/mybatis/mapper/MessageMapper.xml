@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lks.mapper.MessageMapper">
+
+  <select id="getMessageList" resultType="Map">
+    SELECT
+        id,
+        post_time AS postTime,
+        content,
+        message
+    FROM
+        operator_message
+    WHERE
+        org_id = #{orgId}
+        <if test="state != null">
+            AND `type` = #{state}
+        </if>
+        <if test="beginTime != null and beginTime != ''">
+            AND post_time >= #{beginTime}
+        </if>
+        <if test="endTime != null and endTime != ''">
+            AND post_time <![CDATA[ <= ]]> #{endTime}
+        </if>
+  </select>
+
+  <select id="getMessageOrderList" resultType="Map">
+    SELECT
+      a.id,
+      a.post_time AS postTime,
+      a.content,
+      a.message,
+	  b.refund_type AS refundType,
+	  b.`status`
+    FROM
+        operator_message a LEFT JOIN orders b ON a.params = b.id
+    WHERE
+        a.accept_org_id = #{orgId}
+      <if test="state != null">
+          AND a.`type` = #{state}
+      </if>
+      <if test="orderState != null">
+          AND b.refund_type = #{orderState}
+      </if>
+      <if test="beginTime != null and beginTime != ''">
+          AND a.post_time >= #{beginTime}
+      </if>
+      <if test="endTime != null and endTime != ''">
+          AND a.post_time <![CDATA[ <= ]]> #{endTime}
+      </if>
+  </select>
+
+  <select id="getMessage" resultType="Map">
+    SELECT
+        a.message,
+        a.post_time AS postTime,
+        a.type
+    FROM
+        operator_message AS a,
+        (
+            SELECT
+                MAX(id) AS maxId,
+                type
+            FROM
+                operator_message
+            WHERE
+                accept_org_id = #{orgId}
+            GROUP BY
+                type
+        ) AS b
+    WHERE
+        id IN (b.maxId)
+  </select>
+
+  <select id="getMessageInfo" resultType="Map">
+    SELECT
+        `type`,
+        params
+    FROM
+        operator_message
+    WHERE
+        accept_org_id = #{orgId}
+    AND id = #{messageId}
+  </select>
+
+  <select id="abnormalOrder" resultType="Map">
+    SELECT
+        refund_amount AS realAmount,
+        refund_time AS refundTime,
+        id,
+        `status` AS orderState
+    FROM
+        orders
+    WHERE
+        org_id = #{orgId} AND  refund_type = 2
+      <if test="orderState != null and orderState != ''">
+          AND status = #{orderState}
+      </if>
+  </select>
+
+  <select id="abnormalOrderDetail" resultType="Map">
+    SELECT
+        a.terminal_name AS terminalName,
+        a.terminal_img AS terminalImg,
+        IFNULL(a.user_name,"") AS userName,
+        a.telphone,
+        a.address,
+		a.refund_type AS refundType,
+		a.`status` AS orderState,
+        a.payment_id AS paymentId,
+        a.refund_time AS refundTime,
+        a.order_no AS orderNo,
+        a.refund_amount AS refundAmount,
+        a.payment_time AS paymentTime,
+        a.real_amount AS realAmount,
+        a.resoure_type AS  resoureType,
+        IFNULL(b.env_money, 0) as envMoney
+    FROM
+        orders a
+    LEFT JOIN customer_redenv b ON a.customer_redenv_id = b.id
+    WHERE
+        a.id = #{id}
+    AND a.org_id = #{orgId};
+  </select>
+
+  <select id="getOrderDetail" resultType="Map">
+    SELECT
+        good_title AS goodTitle,
+        real_price AS realPrice,
+        img_url AS  goodImgUrl,
+        quantity
+    FROM
+        order_good
+    WHERE
+        org_id = #{orgId}
+    AND order_id = #{id}
+  </select>
+
+  <select id="getRefundMessageList" resultType="Map">
+      SELECT
+        id,
+        refund_type AS refundType,
+        refund_time AS time,
+        refund_amount AS refundAmount
+      FROM
+        orders
+      WHERE
+        org_id = #{orgId} AND refund_amount > 0
+      <if test="beginTime != null and beginTime != ''">
+          AND refund_time >= #{beginTime}
+      </if>
+      <if test="endTime != null and endTime != ''">
+          AND refund_time <![CDATA[ <= ]]> #{endTime}
+      </if>
+      ORDER BY time DESC
+  </select>
+
+  <select id="getSellMessageOrderList" resultType="Map">
+      SELECT
+        id,
+        describe_a AS describeA,
+        payment_time AS time,
+        real_amount AS realAmount
+      FROM
+        orders
+      WHERE
+        org_id = #{orgId} AND payment_status = 2
+      <if test="beginTime != null and beginTime != ''">
+          AND payment_time >= #{beginTime}
+      </if>
+      <if test="endTime != null and endTime != ''">
+          AND payment_time <![CDATA[ <= ]]> #{endTime}
+      </if>
+      ORDER BY time DESC
+  </select>
+
+  <select id="countMoney" resultType="BigDecimal">
+      SELECT
+        SUM(real_amount) AS countMoney
+      FROM
+        orders
+      WHERE
+        org_id = #{orgId} AND payment_status = 2
+      <if test="beginTime != null and beginTime != ''">
+          AND payment_time >= #{beginTime}
+      </if>
+      <if test="endTime != null and endTime != ''">
+          AND payment_time <![CDATA[ <= ]]> #{endTime}
+      </if>
+  </select>
+
+</mapper>

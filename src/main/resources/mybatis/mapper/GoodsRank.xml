@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lks.mapper.GoodsRankMapper">
+
+  <select id="goodsRank" resultType="Map">
+        SELECT
+            a.good_id AS id,
+            a.img_url AS imgUrl,
+            a.good_title AS goodTitle,
+            IFNULL(SUM(a.real_amount), 0) AS realAmount,
+            COUNT(a.good_id) AS countNum
+        FROM
+            orders b
+        LEFT JOIN order_good a ON a.order_id = b.id
+        LEFT JOIN goods c ON b.good_id =c.id
+        WHERE
+            b.org_id = #{orgId}
+        AND b.`status` =  3
+        AND b.add_time >= #{beginTime}
+        AND b.add_time <![CDATA[ <= ]]> #{endTime}
+        AND c.is_new = 1
+        AND b.is_delete = 0
+        GROUP BY
+            id,
+            imgUrl,
+            goodTitle
+        ORDER BY  realAmount DESC,countNum DESC
+  </select>
+
+
+    <select id="getGoodsList" resultType="Map">
+        SELECT
+            a.good_img AS goodImg,
+            a.container_no AS containerNo,
+            a.max_quantity AS maxQuantity,
+            a.stock_quantity + a.occupy_count AS stockQuantity,
+            case when b.total_inventory <![CDATA[ <= 0 ]]> then 1 else 0 end AS isStockout,
+            case when SUM(a.max_quantity) - (SUM(a.stock_quantity)+ SUM(a.occupy_count)) <![CDATA[ <= 0 ]]> then 0 else 1 end AS isLack
+        FROM
+          terminal_good_relation a
+          LEFT JOIN goods b ON a.good_id = b.id
+        WHERE
+            a.terminal_id = #{terminalId}
+            AND b.is_new = 1
+            AND b.is_delete = 0
+        GROUP BY containerNo,goodImg,maxQuantity,stockQuantity,isStockout
+    </select>
+
+    <select id="goodsClassify" resultType="Map">
+        SELECT
+            id,
+            title
+        FROM
+            good_category
+        WHERE
+            org_id = #{orgId}
+    </select>
+
+    <select id="goodsInfoList" resultType="Map">
+        SELECT
+            a.id,
+            a.title AS goodTitle,
+            c.title AS classifyTitle,
+            a.img_url AS imgUrl,
+            a.total_inventory AS totalInventory,
+            a.remnant_inventory AS remnantInventory,
+            SUM(b.max_quantity) - (SUM(b.occupy_count)+SUM(b.stock_quantity)) AS stockout
+        FROM
+            goods a
+        LEFT JOIN terminal_good_relation b ON a.id = b.good_id
+        LEFT JOIN good_category c ON a.category_id = c.id
+        WHERE
+            a.org_id = #{orgId}
+        AND b.org_id = #{orgId}
+        AND a.is_new = 1
+        AND a.is_delete = 0
+        <if test="classifyId != null and classifyId != ''">
+            AND a.category_id = #{classifyId}
+        </if>
+        <if test="keyWord != null and keyWord != ''">
+            AND a.title LIKE CONCAT('%',#{keyWord},'%')
+        </if>
+        GROUP BY id,goodTitle,classifyTitle,imgUrl,totalInventory,remnantInventory
+    </select>
+</mapper>

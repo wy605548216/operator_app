@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lks.mapper.UserMapper">
+  <resultMap id="BaseResultMap" type="com.lks.pojo.SysUser">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="head_img" jdbcType="VARCHAR" property="headImg" />
+    <result column="user_no" jdbcType="VARCHAR" property="userNo" />
+    <result column="user_name" jdbcType="VARCHAR" property="userName" />
+    <result column="password" jdbcType="VARCHAR" property="password" />
+    <result column="real_name" jdbcType="VARCHAR" property="realName" />
+    <result column="org_id" jdbcType="INTEGER" property="orgId" />
+    <result column="role_id" jdbcType="INTEGER" property="roleId" />
+    <result column="email" jdbcType="VARCHAR" property="email" />
+    <result column="phone" jdbcType="VARCHAR" property="phone" />
+    <result column="is_super" jdbcType="BIT" property="isSuper" />
+    <result column="is_enable" jdbcType="BIT" property="isEnable" />
+    <result column="add_user" jdbcType="INTEGER" property="addUser" />
+    <result column="add_time" jdbcType="TIMESTAMP" property="addTime" />
+    <result column="update_user" jdbcType="INTEGER" property="updateUser" />
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+    <result column="last_login_ip" jdbcType="VARCHAR" property="lastLoginIp" />
+    <result column="last_login_time" jdbcType="TIMESTAMP" property="lastLoginTime" />
+    <result column="is_distribution" jdbcType="BIT" property="isDistribution" />
+    <result column="is_godown_man" jdbcType="BIT" property="isGodownMan" />
+  </resultMap>
+
+  <select id="getUserInfo" parameterType="java.lang.String" resultMap="BaseResultMap">
+    SELECT
+        a.*
+    FROM
+        sys_user a
+    LEFT JOIN sys_role b ON a.role_id = b.id
+    WHERE
+        a.user_name = #{userName}
+      AND a.password =#{passWord}
+      AND b.role_type = 'Operator'
+  </select>
+
+
+  <select id="getUserInfoMoney" resultType="Map">
+    SELECT
+        balance,
+        amount,
+        drawal
+    FROM
+        account_info
+    WHERE
+        org_id = #{orgId}
+  </select>
+
+  <select id="drawalList" resultType="Map">
+    SELECT
+        id,
+        apply_time AS applyTime,
+        drawal_meony AS drawalMeony,
+        IFNULL(audit_status,3) AS auditStatus
+    FROM
+        account_drawal_apply
+    WHERE
+        org_id = #{orgId}
+        <if test="state == 1 or state == 0">
+          AND  audit_status = #{state}
+        </if>
+        <if test="state == 3">
+          AND  audit_status IS NULL
+        </if>
+      ORDER BY applyTime DESC
+  </select>
+
+</mapper>

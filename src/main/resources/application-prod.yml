@@ -1,0 +1,42 @@
+spring:
+  datasource:
+    driver-class-name: com.mysql.jdbc.Driver
+    url: jdbc:mysql://rm-uf6n85829is94qu14.mysql.rds.aliyuncs.com/kjs?serverTimezone=Asia/Shanghai&characterEncoding=utf-8&allowMultiQueries=true
+    username: zmk
+    password: zmk123456!@#
+    hikari:
+      idle-timeout: 60000
+      connection-timeout: 60000
+      validation-timeout: 3000
+      max-lifetime: 60000
+  redis:
+    database: 2
+    host: r-uf6a286f0da9d784.redis.rds.aliyuncs.com
+    port: 6379
+    password: kj123456KUO
+  jmx:
+    enabled: false
+    default-domain: operatorApp
+
+
+## 该配置节点为独立的节点
+mybatis.mapper-locations: classpath:mybatis/mapper/*.xml  #注意：一定要对应mapper映射xml文件的所在路径
+mybatis.type-aliases-package: com.lks.pojo  # 注意：对应实体类的路径
+
+#pagehelper分页插件
+pagehelper:
+    helperDialect: mysql
+    reasonable: true
+    supportMethodsArguments: true
+    params: count=countSql
+
+# 打印sql
+logging:
+  level:
+    com.luxtek.mapper : DEBUG
+
+
+url:
+  pic: https://file.kj-tek.com
+  refund: http://pay.kj-tek.com
+  token: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwcm9qZWN0X2lkIjoiMSIsIm9yZ19pZCI6IjAiLCJodHRwOi8vc2NoZW1hcy5taWNyb3NvZnQuY29tL3dzLzIwMDgvMDYvaWRlbnRpdHkvY2xhaW1zL2V4cGlyYXRpb24iOiIwMi8xNy8yMDIwIDA3OjIxOjE4IiwibmJmIjoxNTQ1MTAzMjc4LCJleHAiOjE1ODE4OTUyNzgsImlzcyI6InByb2R1Y3QiLCJhdWQiOiJwcm9kdWN0In0.Q_AdufavDnIBEVqkTlbTzZsOug7dJDWvtIpi4_LU1vs
