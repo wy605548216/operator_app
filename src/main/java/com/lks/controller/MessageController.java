@@ -24,7 +24,7 @@ public class MessageController {
     @ResponseBody
     public MobileResult getMessage(@RequestParam(required = false) String orgId){
 
-        return messageService.getMessage(Integer.parseInt(orgId));
+        return  messageService.getMessage(Integer.parseInt(orgId));
     }
 
     // 查message表
